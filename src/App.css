@@ -1,0 +1,17 @@
+:root{
+    background: white;
+    font-family: Roboto;
+}
+body{
+    margin: 0;
+    padding: 0;
+}
+a{
+    text-decoration: none;
+}
+.content{
+    width: 1300px;
+    margin: 48px auto;
+}
+
+

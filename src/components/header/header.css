@@ -1,0 +1,24 @@
+header{
+    background: #2196F3;
+}
+.inner__header{
+    width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+.nav{
+    font-size: 14px;
+    color: white;
+    padding: 23px;
+    transition: 0.3s;
+}
+.nav:hover{
+    background: #1E88E5;
+}
+.active-nav{
+    color: white;
+    padding: 23px;
+    font-size: 14px;
+    background: #1E88E5;
+}
