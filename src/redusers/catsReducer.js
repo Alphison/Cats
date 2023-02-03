@@ -1,66 +1,40 @@
-import { catsAPI } from "../API/api"
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-const SET_CATS = "SET_CATS"
-// const SET_FAVORITE = "SET_FAVORITE"
-const SET_SOME_CATS = "SET_SOME_CATS"
-
-let stateDefault = {
-    cats: []
-}
-
-const catsReducer = (state = stateDefault, action) => {
-    switch (action.type) {
-        case SET_CATS:
-            return {
-                ...state,
-                cats: action.cats
-            }
-        case SET_SOME_CATS: 
-            let stateCopy = {...state}
-            stateCopy.cats = [...state.cats]
-            action.cats_some.map((cat_some) => {
-                stateCopy.cats.push(cat_some)
+export const catsReducer = createApi({
+    reducerPath: 'catsApi',
+    tagTypes: ['Images', 'ImagesFavorite'],
+    baseQuery: fetchBaseQuery({
+        baseUrl: "https://api.thecatapi.com/v1/"
+    }),
+    endpoints: ( builder ) => ({
+        getCats: builder.query({
+            query: () => `images/search?limit=15`,
+            providesTags: (result) =>
+            result
+              ? [
+                  ...result.map(({ id }) => ({ type: 'Images', id })),
+                  { type: 'Images', id: 'LIST' },
+                ]
+              : [{ type: 'Images', id: 'LIST' }],
+        }),
+        moreCats: builder.query({
+            query: () => `images/search?limit=15`,
+        }),
+        addFavorite: builder.mutation({
+           query: (image_id) => ({
+            url: 'favourites',
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'x-api-key': 'live_ArjR8sim0km9TGTz6bbo0F75lcRPgiq2AoD4i8GNHqEBGzZnGRyfRagos4S5X5jR'
+            },
+            body: JSON.stringify({ 
+                "image_id": image_id
             })
-            return stateCopy
-        // case SET_FAVORITE:
-        //     return {
-        //         ...state,
-        //         cats: action.cats
-        //     }
-        default:
-            return state
-    }
-}
-
-const setCatsAction = (cats) => ({type: SET_CATS, cats})
-const setCatsSomeAction = (cats_some) => ({type: SET_SOME_CATS, cats_some})
-
-export const setCatsThunk = () => {
-    return (dispatch) => {
-        catsAPI.setCats()
-        .then(response => {
-            dispatch(setCatsAction(response.data))
+           }),
+           invalidatesTags: [{type: 'ImagesFavorite', id: 'LIST'}]
         })
-    }
-}
+    })
+})
 
-export const setCatsSomeThunk = () => {
-    return (dispatch) => {
-        catsAPI.setCats()
-        .then(response => {
-            dispatch(setCatsSomeAction(response.data))
-        })
-    }
-}
-
-export const setFavoriteThunk = (image_id) => {
-    return (dispatch) => {
-        catsAPI.setFavorite(image_id)
-        // .then(response => {
-        //     debugger
-        //     console.log(response.data)
-        // })
-    }
-}
-
-export default catsReducer
+export const { useGetCatsQuery, useLazyMoreCatsQuery, useAddFavoriteMutation } = catsReducer

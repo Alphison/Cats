@@ -1,28 +1,37 @@
-import { catsFavoriteAPI } from "../API/api"
+import { catsReducer } from "./catsReducer";
 
-const SET_FAVORITES = "SET_FAVORITES"
 
-let defaultState = {
-    catsFavorite: []
-}
+export const catsFavoriteReducer = catsReducer.injectEndpoints({
+    endpoints: ( builder ) => ({
+        getCatsFavorite: builder.query({
+            query: () => ({
+                url: `favourites`,
+                headers: {
+                    'content-type': 'application/json',
+                    'x-api-key': 'live_ArjR8sim0km9TGTz6bbo0F75lcRPgiq2AoD4i8GNHqEBGzZnGRyfRagos4S5X5jR'
+                },
+            }),
+            providesTags: (result) =>
+            result
+              ? [
+                  ...result.map(({ id }) => ({ type: 'ImagesFavorite', id })),
+                  { type: 'ImagesFavorite', id: 'LIST' },
+                ]
+              : [{ type: 'ImagesFavorite', id: 'LIST' }],
+        }),
+        deleteCat: builder.mutation({
+            query: (image_id) => ({
+                url: `favourites/${image_id}`,
+                method: 'DELETE',
+                headers: {
+                    'content-type': 'application/json',
+                    'x-api-key': 'live_ArjR8sim0km9TGTz6bbo0F75lcRPgiq2AoD4i8GNHqEBGzZnGRyfRagos4S5X5jR'
+                },
+            }),
+            invalidatesTags: [{type: 'ImagesFavorite', id: 'LIST'}]
+        })
+    }),
+    overrideExisting: false,
+})
 
-export const favouriteReducer = (state = defaultState, action) => {
-    switch (action.type) {
-        case SET_FAVORITES:
-            return {
-                ...state,
-                catsFavorite: action.catsFavorite
-            }
-        default:
-            return state
-    }
-}
-
-const setCatsFavoriteAction = (catsFavorite) => ({type: SET_FAVORITES, catsFavorite})
-
-export const setCatsFavoriteThunk = () => (dispatch) => {
-    catsFavoriteAPI.setCatsFavorite()
-    .then(response => {
-        dispatch(setCatsFavoriteAction(response.data))
-    })
-}
+export const { useGetCatsFavoriteQuery, useDeleteCatMutation } = catsFavoriteReducer

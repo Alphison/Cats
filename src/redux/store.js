@@ -1,13 +1,13 @@
-import { applyMiddleware, combineReducers, legacy_createStore } from "redux";
-import thunk from "redux-thunk";
-import { favouriteReducer } from "../redusers/catsFavoriteReducer";
-import catsReducer from "../redusers/catsReducer";
+import { configureStore } from "@reduxjs/toolkit";
+import { catsFavoriteReducer } from "../redusers/catsFavoriteReducer";
+import { catsReducer } from "../redusers/catsReducer"
 
-let reducers = combineReducers({
-    catsPage: catsReducer,
-    catsFavoritePage: favouriteReducer
+
+const store = configureStore({
+    reducer: {
+        [catsReducer.reducerPath]: catsReducer.reducer
+    },
+    middleware: (getDefaultMiddlware) => getDefaultMiddlware().concat(catsReducer.middleware)
 })
-
-let store = legacy_createStore(reducers, applyMiddleware(thunk))
 
 export default store

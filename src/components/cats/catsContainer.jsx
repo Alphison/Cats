@@ -1,19 +1,11 @@
-import { connect } from "react-redux"
-import { setFavoriteThunk, setCatsSomeThunk } from "../../redusers/catsReducer"
 import { Cats } from "./cats"
 
-const CatsContainer = (props) => {
+const CatsContainer = () => {
 
     return (
-        <Cats cats={props.cats} setFavoriteThunk={props.setFavoriteThunk} setCatsSomeThunk={props.setCatsSomeThunk}/>
+        <Cats />
     )
 }
 
-const mapStateToProps = (state) => {
 
-    return {
-        cats: state.catsPage.cats
-    }
-}
-
-export default connect(mapStateToProps, { setFavoriteThunk, setCatsSomeThunk })(CatsContainer)
+export default CatsContainer
